@@ -3,6 +3,8 @@
 <p align="center"><em>He says nothing. He shelves them.</em></p>
 
 <p align="center">
+  <!-- replace "yahia-builds" with your GitHub username after pushing -->
+  <img src="https://github.com/yahia-builds/shelf/actions/workflows/test.yml/badge.svg" alt="tests" />
   <img src="https://img.shields.io/badge/manifest-v3-7a4a24" alt="Manifest V3" />
   <img src="https://img.shields.io/badge/license-MIT-7a4a24" alt="MIT" />
   <img src="https://img.shields.io/badge/works%20in-Brave%20%C2%B7%20Chrome%20%C2%B7%20Edge-7a4a24" alt="Brave / Chrome / Edge" />
@@ -16,6 +18,11 @@ You know him. The old librarian. Glasses on a chain, finger to his lips, has kno
 **shelf** puts him inside your browser.
 
 ## Before / after
+
+<p align="center">
+  <!-- placeholder illustration — replace with a real screen-recorded GIF -->
+  <img src="assets/before-after.svg" width="520" alt="before: one screaming row of tabs — after: tidy coloured shelves" />
+</p>
 
 ```
 before  ▸ github · github · youtube · docs · jira · github · youtube · docs · …

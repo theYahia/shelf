@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="210" viewBox="0 0 520 210" font-family="Georgia, serif">
+  <rect width="520" height="210" rx="12" fill="#f4ece0"/>
+
+  <!-- BEFORE -->
+  <text x="20" y="34" font-size="14" fill="#8a7a66" font-style="italic">before</text>
+  <text x="20" y="54" font-size="11" fill="#b8a98f">one screaming row</text>
+  <!-- chaotic mixed tabs in a single row -->
+  <g>
+    <rect x="20"  y="74" width="22" height="58" rx="3" fill="#c9bca6"/>
+    <rect x="45"  y="74" width="22" height="58" rx="3" fill="#c9bca6"/>
+    <rect x="70"  y="74" width="22" height="58" rx="3" fill="#bfb199"/>
+    <rect x="95"  y="74" width="22" height="58" rx="3" fill="#c9bca6"/>
+    <rect x="120" y="74" width="22" height="58" rx="3" fill="#bfb199"/>
+    <rect x="145" y="74" width="22" height="58" rx="3" fill="#c9bca6"/>
+    <rect x="170" y="74" width="22" height="58" rx="3" fill="#bfb199"/>
+    <rect x="195" y="74" width="22" height="58" rx="3" fill="#c9bca6"/>
+  </g>
+  <text x="20" y="152" font-size="10" fill="#b8a98f">…where did that tab go?</text>
+
+  <!-- arrow -->
+  <g stroke="#7a4a24" stroke-width="2" fill="none">
+    <line x1="238" y1="103" x2="280" y2="103"/>
+    <polyline points="272,95 282,103 272,111"/>
+  </g>
+  <text x="237" y="88" font-size="13">📚</text>
+
+  <!-- AFTER -->
+  <text x="300" y="34" font-size="14" fill="#5e3717" font-style="italic">after</text>
+  <text x="300" y="54" font-size="11" fill="#8a7a66">tidy coloured shelves</text>
+  <g>
+    <!-- Github -->
+    <rect x="300" y="70" width="92" height="16" rx="4" fill="#3b82f6"/>
+    <text x="307" y="82" font-size="10" fill="#fff">Github (3)</text>
+    <!-- Youtube -->
+    <rect x="300" y="92" width="92" height="16" rx="4" fill="#ef4444"/>
+    <text x="307" y="104" font-size="10" fill="#fff">Youtube (2)</text>
+    <!-- Docs -->
+    <rect x="300" y="114" width="92" height="16" rx="4" fill="#22c55e"/>
+    <text x="307" y="126" font-size="10" fill="#fff">Docs (2)</text>
+    <!-- Jira -->
+    <rect x="300" y="136" width="92" height="16" rx="4" fill="#eab308"/>
+    <text x="307" y="148" font-size="10" fill="#3b2f00">Jira</text>
+  </g>
+  <text x="300" y="172" font-size="10" fill="#8a7a66" font-style="italic">collapsed. quiet. shelved.</text>
+
+  <!-- shelf under after -->
+  <rect x="300" y="160" width="200" height="4" rx="2" fill="#7a4a24" opacity="0.45"/>
+</svg>
