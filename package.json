@@ -9,7 +9,7 @@
   "homepage": "https://github.com/theYahia/shelf",
   "keywords": ["chrome-extension", "brave", "manifest-v3", "tab-groups", "productivity"],
   "scripts": {
-    "test": "node --test \"tests/**/*.test.js\"",
+    "test": "node --test",
     "icons": "node scripts/make-icons.mjs"
   }
 }
