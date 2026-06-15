@@ -38,7 +38,9 @@ Commit the regenerated `icons/icon*.png`. CI checks they're up to date.
 - `lib/grouping.js` — the shelving engine. New ways to group tabs are **strategies**:
   implement `GroupingStrategy.assign(tabs, settings) → Map<tabId, {key,title,color}>`
   and add it to `PIPELINE` (first strategy to claim a tab wins). This is where the
-  planned local-LLM (Ollama) strategy will live.
+  planned local-LLM (Ollama) strategy will live. `computeAssignments` only feeds
+  **loose** tabs to strategies, and `applyAssignments` never renames/recolours an
+  existing group — shelf respects manual organisation.
 - `lib/domain.js` / `lib/dedupe.js` — pure helpers (keep them browser-free, so they
   stay testable).
 - `background.js` — the service worker: event wiring, the per-window serialization

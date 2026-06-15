@@ -81,8 +81,15 @@ Two optional keyboard shortcuts (defaults below — rebind at `brave://extension
 
 Right-click the icon → **Options**, or the **Settings →** link in the popup. Toggle
 Focus Mode, merge-subdomains, thresholds, edit rules and exceptions, tune duplicate
-matching. Want a fixed colour for a site? Add a **rule** (domain → name → colour) —
-it overrides the automatic palette.
+matching.
+
+### He respects what you do by hand
+
+shelf only shelves **loose** tabs (ones not already in a group). Groups you make,
+name, or recolour yourself are never moved, renamed, or re-collapsed. Want a fixed
+**name and colour** for a site? Add a **rule** (`domain → name → colour`) — shelf keeps
+it stable. A manual rename *without* a rule isn't tracked, so new tabs of that domain
+may start a fresh group; use a rule if you want them to keep merging.
 
 ## Roadmap
 

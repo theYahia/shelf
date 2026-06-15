@@ -1,6 +1,6 @@
 {
   "name": "shelf",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The tab librarian — auto-group browser tabs by domain and custom rules. Manifest V3, vanilla JS, no build.",
   "type": "module",
   "private": true,

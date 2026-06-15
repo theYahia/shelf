@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 
 import { getDomain, domainToColor, domainToTitle, GROUP_COLORS } from "../lib/domain.js";
 import { normalizeUrl, findDuplicates, duplicateCount } from "../lib/dedupe.js";
-import { matchRule } from "../lib/grouping.js";
+import { matchRule, computeAssignments } from "../lib/grouping.js";
 
 // --- domain.js -------------------------------------------------------------
 
@@ -140,4 +140,21 @@ test("matchRule: exact, subdomain, case-insensitive, substring, null", () => {
 
 test("matchRule: rules without a match field are skipped", () => {
   assert.equal(matchRule("https://github.com", [{ name: "x" }]), null);
+});
+
+// --- grouping.js: computeAssignments respects manual groups -----------------
+
+test("computeAssignments: only ungrouped (loose) tabs are shelved", async () => {
+  const settings = { mergeSubdomains: true, exceptions: [], rules: [] };
+  const res = await computeAssignments(
+    [
+      { id: 1, url: "https://github.com", groupId: -1 }, // loose
+      { id: 2, url: "https://github.com", groupId: 7 },  // already grouped by hand
+      { id: 3, url: "https://youtube.com" },             // no groupId field -> loose
+    ],
+    settings
+  );
+  assert.ok(res.has(1), "loose tab is shelved");
+  assert.ok(!res.has(2), "manually grouped tab is left alone");
+  assert.ok(res.has(3), "tab without groupId is treated as loose");
 });
