@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "shelf — the tab librarian",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "You opened 47 tabs. He says nothing. He shelves them. Auto-groups tabs by domain and your rules.",
   "permissions": ["tabs", "tabGroups", "storage"],
   "background": {

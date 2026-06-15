@@ -59,6 +59,16 @@ test("domainToTitle: capitalised label, raw for localhost/IP", () => {
   assert.equal(domainToTitle("192.168.1.1"), "192.168.1.1");
 });
 
+test("domainToTitle: digit-leading domain is not treated as an IP", () => {
+  assert.equal(domainToTitle("2ip.ru"), "2ip");
+});
+
+test("domainToTitle: punycode IDN labels are decoded", () => {
+  assert.equal(domainToTitle("xn--bcher-kva.de"), "Bücher");
+  // a real .рф domain should not surface as raw "Xn--…"
+  assert.ok(!domainToTitle("xn--c1acdymdr.xn--p1ai").startsWith("Xn--"));
+});
+
 // --- dedupe.js -------------------------------------------------------------
 
 test("normalizeUrl: fragment ignored by default, query kept", () => {
