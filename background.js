@@ -72,7 +72,10 @@ async function shelveWindow(windowId) {
 async function dedupeCheck(tab) {
   if (tab.pinned || !tab.url) return;
   const settings = await getSettings();
-  if (settings.enabled && settings.dedupeAutoClose) await closeIfDuplicate(tab, settings);
+  if (settings.enabled && settings.dedupeAutoClose) {
+    // Serialize per window so two duplicates opened at once don't race each other.
+    await enqueue(tab.windowId, () => closeIfDuplicate(tab, settings));
+  }
   scheduleBadge(tab.windowId);
 }
 
@@ -149,13 +152,25 @@ chrome.tabs.onActivated.addListener(async ({ tabId, windowId }) => {
 
   const settings = await getSettings();
 
-  // Shelve the tab we just left — now it can slot into its group without yanking
-  // the user anywhere.
-  if (settings.enabled && prev != null && prev !== tabId) {
-    try {
-      await groupTab(await chrome.tabs.get(prev));
-    } catch {
-      /* the tab we left is already gone */
+  if (settings.enabled) {
+    if (prev != null && prev !== tabId) {
+      // Normal path: shelve the tab we just left — now it can slot into its group
+      // without yanking the user anywhere.
+      try {
+        await groupTab(await chrome.tabs.get(prev));
+      } catch {
+        /* the tab we left is already gone */
+      }
+    } else if (prev == null) {
+      // The service worker just woke up (its in-memory map was wiped after idle).
+      // Catch up on whatever piled up while it slept: shelve every loose tab except
+      // the one now active.
+      try {
+        const tabs = await chrome.tabs.query({ windowId, pinned: false });
+        for (const t of tabs) if (t.id !== tabId) await groupTab(t);
+      } catch {
+        /* window gone */
+      }
     }
   }
 
@@ -168,6 +183,15 @@ chrome.tabs.onActivated.addListener(async ({ tabId, windowId }) => {
       /* tab gone */
     }
   }
+});
+
+// Window closed — drop its per-window state so the maps never grow unbounded and
+// no stale badge timer fires on a dead window.
+chrome.windows.onRemoved.addListener((windowId) => {
+  clearTimeout(badgeTimers.get(windowId));
+  badgeTimers.delete(windowId);
+  queues.delete(windowId);
+  lastActiveByWindow.delete(windowId);
 });
 
 chrome.commands.onCommand.addListener(async (command) => {
