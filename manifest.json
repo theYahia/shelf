@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "shelf — the tab librarian",
+  "version": "0.1.0",
+  "description": "You opened 47 tabs. He says nothing. He shelves them. Auto-groups tabs by domain and your rules.",
+  "permissions": ["tabs", "tabGroups", "storage"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "shelf — shelve your tabs",
+    "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+  },
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "options_page": "options.html",
+  "commands": {
+    "shelve-now": {
+      "description": "Shelve all tabs now (group by domain/rules)"
+    },
+    "hush": {
+      "description": "Hush — collapse all groups"
+    }
+  }
+}

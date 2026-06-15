@@ -1,0 +1,15 @@
+# build artifacts / packaging
+*.zip
+*.crx
+*.pem
+
+# os / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# secrets (none needed today, but never commit them)
+.env
+.env.local

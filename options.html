@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>shelf — settings</title>
+  <style>
+    :root {
+      --paper: #f4ece0; --ink: #2b2118; --leather: #7a4a24;
+      --leather-dark: #5e3717; --muted: #8a7a66; --line: #d9cbb6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Iowan Old Style", Georgia, serif;
+      background: var(--paper); color: var(--ink);
+      max-width: 640px; margin: 0 auto; padding: 28px 24px 60px;
+    }
+    h1 { font-size: 24px; margin: 0 0 2px; }
+    .tagline { font-style: italic; color: var(--muted); margin: 0 0 24px; font-size: 13px; }
+    section { border-top: 1px solid var(--line); padding: 18px 0; }
+    section h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--leather-dark); margin: 0 0 12px; }
+    .field { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; }
+    .field label { font-size: 14px; }
+    .field .hint { font-size: 11px; color: var(--muted); display: block; }
+    input[type="number"] { width: 70px; padding: 4px 6px; font-family: inherit; border: 1px solid var(--line); border-radius: 4px; }
+    textarea { width: 100%; min-height: 80px; font-family: ui-monospace, monospace; font-size: 12px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: #fffdf8; }
+    .note { font-size: 12px; color: var(--muted); font-style: italic; }
+    table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    th { text-align: left; font-size: 11px; color: var(--muted); font-weight: normal; padding: 4px; }
+    td { padding: 3px 4px; }
+    td input { width: 100%; padding: 4px 6px; font-family: inherit; border: 1px solid var(--line); border-radius: 4px; }
+    select { font-family: inherit; padding: 4px; border: 1px solid var(--line); border-radius: 4px; }
+    button { font-family: inherit; font-size: 13px; padding: 6px 12px; border: 1px solid var(--leather-dark); border-radius: 5px; background: var(--leather); color: #fdf7ee; cursor: pointer; }
+    button.ghost { background: transparent; color: var(--leather-dark); }
+    .del { border: none; background: none; color: #b03a2e; cursor: pointer; font-size: 16px; padding: 0 6px; }
+    .saved { font-size: 12px; color: #4a7a3a; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1>📚 shelf — settings</h1>
+  <p class="tagline">Tell the librarian how you like your stacks.</p>
+
+  <section>
+    <h2>Shelving</h2>
+    <div class="field"><label for="enabled">Auto-shelve new tabs<span class="hint">group tabs the moment they load</span></label><input type="checkbox" id="enabled" /></div>
+    <div class="field"><label for="autoCollapse">Focus Mode<span class="hint">collapse every group except the one you're in</span></label><input type="checkbox" id="autoCollapse" /></div>
+    <div class="field"><label for="mergeSubdomains">Merge subdomains<span class="hint">mail.example.com + www.example.com → one shelf</span></label><input type="checkbox" id="mergeSubdomains" /></div>
+    <div class="field"><label for="minTabsToGroup">Minimum tabs to create a shelf</label><input type="number" id="minTabsToGroup" min="1" max="20" /></div>
+    <div class="field"><label for="collapseThreshold">Collapse shelves larger than<span class="hint">0 = never auto-collapse by size</span></label><input type="number" id="collapseThreshold" min="0" max="50" /></div>
+    <p class="note">Pinned tabs are never shelved (browser limitation).</p>
+  </section>
+
+  <section>
+    <h2>Exceptions</h2>
+    <p class="note">Domains the librarian never touches — one per line (e.g. localhost).</p>
+    <textarea id="exceptions" placeholder="localhost&#10;example.com"></textarea>
+  </section>
+
+  <section>
+    <h2>Rules <span class="note">(override automatic domain grouping)</span></h2>
+    <table>
+      <thead><tr><th>Match (domain or text)</th><th>Shelf name</th><th>Colour</th><th></th></tr></thead>
+      <tbody id="rules-body"></tbody>
+    </table>
+    <button id="add-rule" class="ghost" style="margin-top:8px;">+ Add rule</button>
+  </section>
+
+  <section>
+    <h2>Duplicates</h2>
+    <div class="field"><label for="dedupeAutoClose">Auto-close duplicates<span class="hint">close a tab that duplicates an open one</span></label><input type="checkbox" id="dedupeAutoClose" /></div>
+    <div class="field"><label for="dedupeIgnoreFragment">Ignore #fragments when comparing</label><input type="checkbox" id="dedupeIgnoreFragment" /></div>
+    <div class="field"><label for="dedupeIgnoreQuery">Ignore ?query when comparing</label><input type="checkbox" id="dedupeIgnoreQuery" /></div>
+  </section>
+
+  <div><button id="save">Save</button><span id="saved" class="saved"></span></div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

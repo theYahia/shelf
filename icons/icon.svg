@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- leather binding -->
+  <rect width="128" height="128" rx="22" fill="#5e3717"/>
+  <rect x="10" y="10" width="108" height="108" rx="16" fill="#7a4a24"/>
+  <!-- shelf -->
+  <rect x="22" y="92" width="84" height="9" rx="2" fill="#3f2510"/>
+  <!-- coloured book spines = tab-group colours -->
+  <g>
+    <rect x="28" y="34" width="14" height="58" rx="2" fill="#3b82f6"/>
+    <rect x="44" y="42" width="13" height="50" rx="2" fill="#ef4444"/>
+    <rect x="59" y="30" width="14" height="62" rx="2" fill="#22c55e"/>
+    <rect x="75" y="40" width="12" height="52" rx="2" fill="#eab308"/>
+    <rect x="88" y="36" width="13" height="56" rx="2" fill="#a855f7"/>
+  </g>
+  <!-- faint title bands on the spines -->
+  <g fill="#fdf7ee" opacity="0.65">
+    <rect x="30" y="46" width="10" height="3"/>
+    <rect x="46" y="54" width="9" height="3"/>
+    <rect x="61" y="44" width="10" height="3"/>
+    <rect x="77" y="52" width="8" height="3"/>
+    <rect x="90" y="48" width="9" height="3"/>
+  </g>
+</svg>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>shelf</title>
+  <style>
+    :root {
+      --paper: #f4ece0;        /* aged paper */
+      --ink: #2b2118;          /* dark ink */
+      --leather: #7a4a24;      /* leather spine */
+      --leather-dark: #5e3717;
+      --muted: #8a7a66;
+      --line: #d9cbb6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      width: 320px;
+      margin: 0;
+      font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
+      background: var(--paper);
+      color: var(--ink);
+    }
+    header { padding: 14px 16px 8px; border-bottom: 1px solid var(--line); }
+    .title { display: flex; align-items: baseline; gap: 8px; }
+    .title h1 { font-size: 20px; margin: 0; letter-spacing: 0.5px; }
+    .title .book { font-size: 18px; }
+    .tagline { margin: 4px 0 0; font-size: 11px; font-style: italic; color: var(--muted); }
+    .actions { padding: 12px 16px; display: grid; gap: 8px; }
+    button {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 9px 12px;
+      border: 1px solid var(--leather-dark);
+      border-radius: 6px;
+      background: var(--leather);
+      color: #fdf7ee;
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+    button:hover { background: var(--leather-dark); }
+    button.ghost { background: transparent; color: var(--leather-dark); }
+    button.ghost:hover { background: #ece0cd; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .dupes { padding: 0 16px 14px; }
+    .dupes h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 8px 0; }
+    .dupe-empty { font-size: 12px; color: var(--muted); font-style: italic; }
+    .dupe-item { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 0; color: var(--ink); }
+    .dupe-item img { width: 14px; height: 14px; flex: 0 0 auto; }
+    .dupe-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    footer { padding: 8px 16px 12px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    footer a { font-size: 12px; color: var(--leather-dark); cursor: pointer; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .badge { font-size: 11px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title"><span class="book">📚</span><h1>shelf</h1></div>
+    <p class="tagline">He says nothing. He shelves them.</p>
+  </header>
+
+  <div class="actions">
+    <button id="shelve">Shelve now</button>
+    <div class="row">
+      <button id="hush" class="ghost">Hush (collapse)</button>
+      <button id="expand" class="ghost">Expand all</button>
+    </div>
+    <button id="ungroup" class="ghost">Unshelve everything</button>
+  </div>
+
+  <div class="dupes">
+    <h2>Duplicates</h2>
+    <div id="dupe-list" class="dupe-empty">Looking…</div>
+    <button id="close-dupes" style="display:none; margin-top:8px;">Close duplicates</button>
+  </div>
+
+  <footer>
+    <span id="status" class="badge"></span>
+    <a id="open-options">Settings →</a>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
