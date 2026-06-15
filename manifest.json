@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "shelf — the tab librarian",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "You opened 47 tabs. He says nothing. He shelves them. Auto-groups tabs by domain and your rules.",
   "permissions": ["tabs", "tabGroups", "storage"],
   "background": {
@@ -17,9 +17,11 @@
   "options_page": "options.html",
   "commands": {
     "shelve-now": {
+      "suggested_key": { "default": "Ctrl+Shift+U" },
       "description": "Shelve all tabs now (group by domain/rules)"
     },
     "hush": {
+      "suggested_key": { "default": "Ctrl+Shift+E" },
       "description": "Hush — collapse all groups"
     }
   }

@@ -1,12 +1,12 @@
 {
   "name": "shelf",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "The tab librarian — auto-group browser tabs by domain and custom rules. Manifest V3, vanilla JS, no build.",
   "type": "module",
   "private": true,
   "author": "Yahia",
   "license": "MIT",
-  "homepage": "https://github.com/yahia-builds/shelf",
+  "homepage": "https://github.com/theYahia/shelf",
   "keywords": ["chrome-extension", "brave", "manifest-v3", "tab-groups", "productivity"],
   "scripts": {
     "test": "node --test \"tests/**/*.test.js\"",

@@ -3,8 +3,7 @@
 <p align="center"><em>He says nothing. He shelves them.</em></p>
 
 <p align="center">
-  <!-- replace "yahia-builds" with your GitHub username after pushing -->
-  <img src="https://github.com/yahia-builds/shelf/actions/workflows/test.yml/badge.svg" alt="tests" />
+  <img src="https://github.com/theYahia/shelf/actions/workflows/test.yml/badge.svg" alt="tests" />
   <img src="https://img.shields.io/badge/manifest-v3-7a4a24" alt="Manifest V3" />
   <img src="https://img.shields.io/badge/license-MIT-7a4a24" alt="MIT" />
   <img src="https://img.shields.io/badge/works%20in-Brave%20%C2%B7%20Chrome%20%C2%B7%20Edge-7a4a24" alt="Brave / Chrome / Edge" />
@@ -68,11 +67,22 @@ Before shelving a tab, the librarian asks, in order:
 Lazy, not careless: pinned tabs are never touched, exceptions are honoured, and he
 never sends a single URL anywhere.
 
+He shelves a tab **when you leave it**, never while you're reading it — so opening a
+link never yanks the current tab out from under you into a faraway group.
+
+## Shortcuts
+
+Two optional keyboard shortcuts (defaults below — rebind at `brave://extensions/shortcuts`):
+
+- **Shelve now** — `Ctrl+Shift+U`
+- **Hush** (collapse all groups) — `Ctrl+Shift+E`
+
 ## Settings
 
 Right-click the icon → **Options**, or the **Settings →** link in the popup. Toggle
 Focus Mode, merge-subdomains, thresholds, edit rules and exceptions, tune duplicate
-matching.
+matching. Want a fixed colour for a site? Add a **rule** (domain → name → colour) —
+it overrides the automatic palette.
 
 ## Roadmap
 

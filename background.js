@@ -54,23 +54,34 @@ function scheduleBadge(windowId, delay = 300) {
 
 // --- core actions ----------------------------------------------------------
 
-/** Shelve every tab in a window. */
+/** Shelve every tab in a window, then (in Focus Mode) collapse the lot so one
+ *  "Shelve now" both sorts and tidies. */
 async function shelveWindow(windowId) {
   const settings = await getSettings();
   const tabs = await shelvableTabs(windowId);
   const assignments = await computeAssignments(tabs, settings);
   await enqueue(windowId, () => applyAssignments(windowId, assignments, settings));
+  if (settings.autoCollapse) await enqueue(windowId, () => setAllCollapsed(windowId, true));
   scheduleBadge(windowId);
 }
 
-/** Shelve a single tab as it loads — the realtime path. */
-async function shelveTab(tab) {
+/** On a freshly-loaded tab: only close it if it duplicates an open one. We do NOT
+ *  group here — grouping a tab moves it into its group, which would yank the tab
+ *  you're looking at down to a faraway shelf. Grouping happens when you leave the
+ *  tab (see onActivated). */
+async function dedupeCheck(tab) {
   if (tab.pinned || !tab.url) return;
   const settings = await getSettings();
+  if (settings.enabled && settings.dedupeAutoClose) await closeIfDuplicate(tab, settings);
+  scheduleBadge(tab.windowId);
+}
+
+/** Group a single tab — called once the user has navigated away from it, so the
+ *  move doesn't disrupt where they are. */
+async function groupTab(tab) {
+  if (!tab || tab.pinned || !tab.url) return;
+  const settings = await getSettings();
   if (!settings.enabled) return;
-
-  if (settings.dedupeAutoClose && (await closeIfDuplicate(tab, settings))) return;
-
   const assignments = await computeAssignments([tab], settings);
   if (assignments.size) {
     await enqueue(tab.windowId, () => applyAssignments(tab.windowId, assignments, settings));
@@ -119,23 +130,43 @@ async function refreshBadge(windowId) {
 // --- event wiring ----------------------------------------------------------
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
-  // Only the final "complete" event. The intermediate url-change event fires too
-  // early and would double-process the same tab.
-  if (changeInfo.status === "complete") shelveTab(tab);
+  // Only the final "complete" event. We dedupe here but do NOT group — grouping
+  // waits until the user leaves the tab (onActivated) so it never jumps away.
+  if (changeInfo.status === "complete") dedupeCheck(tab);
 });
 
 chrome.tabs.onRemoved.addListener((_tabId, info) => {
   if (!info.isWindowClosing) scheduleBadge(info.windowId);
 });
 
+// Track the active tab per window, so we can shelve a tab only once the user
+// leaves it — never the tab they're currently reading.
+const lastActiveByWindow = new Map();
+
 chrome.tabs.onActivated.addListener(async ({ tabId, windowId }) => {
+  const prev = lastActiveByWindow.get(windowId);
+  lastActiveByWindow.set(windowId, tabId);
+
   const settings = await getSettings();
-  if (!settings.autoCollapse) return;
-  try {
-    const tab = await chrome.tabs.get(tabId);
-    await applyFocusMode(windowId, tab.groupId);
-  } catch {
-    /* tab gone */
+
+  // Shelve the tab we just left — now it can slot into its group without yanking
+  // the user anywhere.
+  if (settings.enabled && prev != null && prev !== tabId) {
+    try {
+      await groupTab(await chrome.tabs.get(prev));
+    } catch {
+      /* the tab we left is already gone */
+    }
+  }
+
+  // Focus Mode: collapse the other groups around the tab you just moved to.
+  if (settings.autoCollapse) {
+    try {
+      const tab = await chrome.tabs.get(tabId);
+      await applyFocusMode(windowId, tab.groupId);
+    } catch {
+      /* tab gone */
+    }
   }
 });
 
