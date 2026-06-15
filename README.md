@@ -12,16 +12,18 @@
 
 ---
 
+<p align="center">
+  <!-- generated animation (scripts/make-demo.mjs); swap for a real screen-recorded GIF if you make one -->
+  <img src="assets/demo.png" width="460" alt="before: one screaming row of grey tabs — after: tidy coloured shelves, then collapsed" />
+</p>
+
+<p align="center"><strong>Your tab bar is a screaming row. He shelves it — quietly.</strong></p>
+
 You know him. The old librarian. Glasses on a chain, finger to his lips, has known where every book lives since before you were born. You drop forty-seven open tabs on his desk in one screaming row. He says nothing. He shelves them.
 
 **shelf** puts him inside your browser.
 
 ## Before / after
-
-<p align="center">
-  <!-- placeholder illustration — replace with a real screen-recorded GIF -->
-  <img src="assets/before-after.svg" width="520" alt="before: one screaming row of tabs — after: tidy coloured shelves" />
-</p>
 
 ```
 before  ▸ github · github · youtube · docs · jira · github · youtube · docs · …
@@ -99,6 +101,9 @@ may start a fresh group; use a rule if you want them to keep merging.
   (`lib/grouping.js`), so this drops in as one more strategy. Cloud providers
   (OpenAI/Claude) as an opt-in fallback.
 - AI rule generation ("group my research tabs") and tab-search.
+- **Firefox** — waiting on a stable `tabGroups` WebExtension API. shelf's grouping is
+  built entirely on `chrome.tabGroups`, which Firefox doesn't expose yet; until it
+  does, shelf is Chromium-only (Chrome · Brave · Edge).
 
 ## License
 

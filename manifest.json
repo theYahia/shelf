@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "shelf — the tab librarian",
-  "version": "0.4.0",
-  "description": "You opened 47 tabs. He says nothing. He shelves them. Auto-groups tabs by domain and your rules.",
+  "version": "0.5.0",
+  "description": "Your tab bar is a screaming row of tabs. He shelves each onto its shelf, by domain or your rules — quietly, locally, no cloud.",
   "permissions": ["tabs", "tabGroups", "storage"],
   "background": {
     "service_worker": "background.js",

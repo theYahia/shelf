@@ -1,6 +1,6 @@
 {
   "name": "shelf",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "The tab librarian — auto-group browser tabs by domain and custom rules. Manifest V3, vanilla JS, no build.",
   "type": "module",
   "private": true,
@@ -10,6 +10,7 @@
   "keywords": ["chrome-extension", "brave", "manifest-v3", "tab-groups", "productivity"],
   "scripts": {
     "test": "node --test",
-    "icons": "node scripts/make-icons.mjs"
+    "icons": "node scripts/make-icons.mjs",
+    "demo": "node scripts/make-demo.mjs"
   }
 }
