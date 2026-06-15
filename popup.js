@@ -15,17 +15,19 @@ function setStatus(text) {
 }
 
 async function loadDuplicates() {
+  const section = document.querySelector(".dupes");
   const list = document.getElementById("dupe-list");
   const closeBtn = document.getElementById("close-dupes");
   const res = await send("GET_DUPLICATES");
   const groups = res?.groups || [];
 
+  // Auto-close keeps duplicates from piling up, so hide the whole section when
+  // there's nothing to clean — the popup stays short.
   if (!groups.length) {
-    list.className = "dupe-empty";
-    list.textContent = "No duplicates. Tidy.";
-    closeBtn.style.display = "none";
+    section.style.display = "none";
     return;
   }
+  section.style.display = "";
 
   const redundant = groups.reduce((n, g) => n + (g.tabs.length - 1), 0);
   list.className = "";
