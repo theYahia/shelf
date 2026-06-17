@@ -4,7 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import { getDomain, domainToColor, domainToTitle, GROUP_COLORS } from "../lib/domain.js";
-import { normalizeUrl, findDuplicates, duplicateCount } from "../lib/dedupe.js";
+import { normalizeUrl, findDuplicates, duplicateCount, dedupeOptions } from "../lib/dedupe.js";
 import { matchRule, computeAssignments } from "../lib/grouping.js";
 
 // --- domain.js -------------------------------------------------------------
@@ -124,6 +124,13 @@ test("findDuplicates: groups, sorts by id, ignores urlless tabs", () => {
 test("duplicateCount: redundant tabs (group size minus one)", () => {
   assert.equal(duplicateCount([{ tabs: [{}, {}, {}] }, { tabs: [{}, {}] }]), 3);
   assert.equal(duplicateCount([]), 0);
+});
+
+test("dedupeOptions: maps settings keys onto normalizeUrl option keys", () => {
+  assert.deepEqual(
+    dedupeOptions({ dedupeIgnoreFragment: true, dedupeIgnoreQuery: false }),
+    { ignoreFragment: true, ignoreQuery: false }
+  );
 });
 
 // --- grouping.js: matchRule ------------------------------------------------

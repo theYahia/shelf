@@ -9,7 +9,7 @@ import {
   setAllCollapsed,
   ungroupAll,
 } from "./lib/grouping.js";
-import { findDuplicates, duplicateCount, normalizeUrl } from "./lib/dedupe.js";
+import { findDuplicates, duplicateCount, normalizeUrl, dedupeOptions } from "./lib/dedupe.js";
 
 // --- helpers ---------------------------------------------------------------
 
@@ -94,10 +94,7 @@ async function groupTab(tab) {
 
 /** If this tab duplicates an older one, close it and focus the original. */
 async function closeIfDuplicate(tab, settings) {
-  const opts = {
-    ignoreFragment: settings.dedupeIgnoreFragment,
-    ignoreQuery: settings.dedupeIgnoreQuery,
-  };
+  const opts = dedupeOptions(settings);
   const key = normalizeUrl(tab.url, opts);
   const tabs = await chrome.tabs.query({ windowId: tab.windowId });
   const original = tabs.find(
@@ -118,10 +115,7 @@ async function refreshBadge(windowId) {
   try {
     const settings = await getSettings();
     const tabs = await chrome.tabs.query({ windowId });
-    const groups = findDuplicates(tabs, {
-      ignoreFragment: settings.dedupeIgnoreFragment,
-      ignoreQuery: settings.dedupeIgnoreQuery,
-    });
+    const groups = findDuplicates(tabs, dedupeOptions(settings));
     const n = duplicateCount(groups);
     await chrome.action.setBadgeText({ text: n ? String(n) : "" });
     await chrome.action.setBadgeBackgroundColor({ color: "#a1662f" }); // leather brown
@@ -222,10 +216,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       case "GET_DUPLICATES": {
         const settings = await getSettings();
         const tabs = await chrome.tabs.query({ windowId });
-        const groups = findDuplicates(tabs, {
-          ignoreFragment: settings.dedupeIgnoreFragment,
-          ignoreQuery: settings.dedupeIgnoreQuery,
-        }).map((g) => ({
+        const groups = findDuplicates(tabs, dedupeOptions(settings)).map((g) => ({
           key: g.key,
           tabs: g.tabs.map((t) => ({ id: t.id, title: t.title, url: t.url, favIconUrl: t.favIconUrl })),
         }));
@@ -234,10 +225,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       case "CLOSE_DUPLICATES": {
         const settings = await getSettings();
         const tabs = await chrome.tabs.query({ windowId });
-        const groups = findDuplicates(tabs, {
-          ignoreFragment: settings.dedupeIgnoreFragment,
-          ignoreQuery: settings.dedupeIgnoreQuery,
-        });
+        const groups = findDuplicates(tabs, dedupeOptions(settings));
         const toClose = groups.flatMap((g) => g.tabs.slice(1).map((t) => t.id)); // keep oldest
         if (toClose.length) await chrome.tabs.remove(toClose);
         await refreshBadge(windowId);
