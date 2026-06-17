@@ -1,3 +1,6 @@
+# dependencies (none today — vanilla JS, no build — but never commit them if added)
+node_modules/
+
 # build artifacts / packaging
 *.zip
 *.crx
