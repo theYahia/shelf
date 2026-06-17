@@ -1,5 +1,7 @@
 // popup.js — the front desk. Sends requests to the librarian (background worker).
 
+import { duplicateCount } from "./lib/dedupe.js";
+
 async function currentWindowId() {
   const w = await chrome.windows.getCurrent();
   return w.id;
@@ -29,7 +31,7 @@ async function loadDuplicates() {
   }
   section.style.display = "";
 
-  const redundant = groups.reduce((n, g) => n + (g.tabs.length - 1), 0);
+  const redundant = duplicateCount(groups);
   list.className = "";
   list.innerHTML = "";
   for (const g of groups) {
