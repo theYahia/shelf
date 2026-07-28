@@ -8,6 +8,15 @@
     :root {
       --paper: #f4ece0; --ink: #2b2118; --leather: #7a4a24;
       --leather-dark: #5e3717; --muted: #8a7a66; --line: #d9cbb6;
+      --field: #fffdf8; --chip: #ece0cd;
+    }
+    /* The reading room after hours. */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #1c1815; --ink: #e8ddcc; --leather: #8a5628;
+        --leather-dark: #b07a45; --muted: #948573; --line: #362f28;
+        --field: #14110f; --chip: #2a231d;
+      }
     }
     * { box-sizing: border-box; }
     body {
@@ -23,7 +32,9 @@
     .field label { font-size: 14px; }
     .field .hint { font-size: 11px; color: var(--muted); display: block; }
     input[type="number"] { width: 70px; padding: 4px 6px; font-family: inherit; border: 1px solid var(--line); border-radius: 4px; }
-    textarea { width: 100%; min-height: 80px; font-family: ui-monospace, monospace; font-size: 12px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: #fffdf8; }
+    textarea { width: 100%; min-height: 80px; font-family: ui-monospace, monospace; font-size: 12px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--field); color: var(--ink); }
+    input[type="number"], td input { background: var(--field); color: var(--ink); }
+    select { background: var(--field); color: var(--ink); }
     .note { font-size: 12px; color: var(--muted); font-style: italic; }
     table { width: 100%; border-collapse: collapse; margin-top: 6px; }
     th { text-align: left; font-size: 11px; color: var(--muted); font-weight: normal; padding: 4px; }
@@ -34,42 +45,84 @@
     button.ghost { background: transparent; color: var(--leather-dark); }
     .del { border: none; background: none; color: #b03a2e; cursor: pointer; font-size: 16px; padding: 0 6px; }
     .saved { font-size: 12px; color: #4a7a3a; margin-left: 8px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    code { font-family: ui-monospace, monospace; font-size: 11px; background: var(--chip); padding: 1px 4px; border-radius: 3px; }
   </style>
 </head>
 <body>
   <h1>📚 shelf — settings</h1>
   <p class="tagline">Tell the librarian how you like your stacks.</p>
 
+  <section id="first-run" hidden>
+    <h2>Before he starts</h2>
+    <p class="note">Nothing has been moved yet. Here's what shelving your open tabs
+      would do right now — your own groups are never touched either way.</p>
+    <p id="preview">Looking…</p>
+    <div class="row">
+      <button id="apply-first-run">Shelve them</button>
+      <button id="skip-first-run" class="ghost">Not now</button>
+    </div>
+  </section>
+
   <section>
     <h2>Shelving</h2>
-    <div class="field"><label for="enabled">Auto-shelve new tabs<span class="hint">group tabs the moment they load</span></label><input type="checkbox" id="enabled" /></div>
+    <div class="field"><label for="enabled">Auto-shelve new tabs<span class="hint">shelves a tab once you leave it — never while you're reading it</span></label><input type="checkbox" id="enabled" /></div>
     <div class="field"><label for="autoCollapse">Focus Mode<span class="hint">collapse every group except the one you're in</span></label><input type="checkbox" id="autoCollapse" /></div>
     <div class="field"><label for="mergeSubdomains">Merge subdomains<span class="hint">mail.example.com + www.example.com → one shelf</span></label><input type="checkbox" id="mergeSubdomains" /></div>
     <div class="field"><label for="minTabsToGroup">Minimum tabs to create a shelf<span class="hint">2 = leave lone tabs alone, only group a site with 2+ open</span></label><input type="number" id="minTabsToGroup" min="1" max="20" /></div>
-    <div class="field"><label for="collapseThreshold">Collapse shelves larger than<span class="hint">0 = never auto-collapse by size</span></label><input type="number" id="collapseThreshold" min="0" max="50" /></div>
+    <div class="field"><label for="tidyLooseTabs">Sweep strays to the end<span class="hint">keeps lone tabs from breaking up the shelves — never the tab you're on</span></label><input type="checkbox" id="tidyLooseTabs" /></div>
+    <div class="field"><label for="collapseThreshold">Collapse shelves larger than<span class="hint" id="collapseThreshold-hint">0 = never auto-collapse by size</span></label><input type="number" id="collapseThreshold" min="0" max="50" /></div>
     <p class="note">Pinned tabs are never shelved (browser limitation).</p>
   </section>
 
   <section>
     <h2>Exceptions</h2>
-    <p class="note">Domains the librarian never touches — one per line (e.g. localhost).</p>
+    <p class="note">Domains the librarian never touches — one per line (e.g. localhost). A
+      domain covers its subdomains too, so <code>google.com</code> also spares
+      mail.google.com. Add a port to single one out: <code>localhost:3000</code>.</p>
     <textarea id="exceptions" placeholder="localhost&#10;example.com"></textarea>
   </section>
 
   <section>
     <h2>Rules <span class="note">(override automatic domain grouping)</span></h2>
     <table>
-      <thead><tr><th>Match (domain or text)</th><th>Shelf name</th><th>Colour</th><th></th></tr></thead>
+      <thead><tr><th>Match (domain, word, or path)</th><th>Shelf name</th><th>Colour</th><th></th></tr></thead>
       <tbody id="rules-body"></tbody>
     </table>
+    <p class="note"><code>github.com</code> matches that host and its subdomains ·
+      <code>youtube</code> matches a whole name part · <code>github.com/issues</code>
+      matches anywhere in the address.</p>
     <button id="add-rule" class="ghost" style="margin-top:8px;">+ Add rule</button>
   </section>
 
   <section>
     <h2>Duplicates</h2>
     <div class="field"><label for="dedupeAutoClose">Auto-close duplicates<span class="hint">close a tab that duplicates an open one</span></label><input type="checkbox" id="dedupeAutoClose" /></div>
-    <div class="field"><label for="dedupeIgnoreFragment">Ignore #fragments when comparing</label><input type="checkbox" id="dedupeIgnoreFragment" /></div>
+    <div class="field"><label for="dedupeIgnoreFragment">Ignore #fragments when comparing<span class="hint">#/routes are always kept apart — they're different pages</span></label><input type="checkbox" id="dedupeIgnoreFragment" /></div>
     <div class="field"><label for="dedupeIgnoreQuery">Ignore ?query when comparing</label><input type="checkbox" id="dedupeIgnoreQuery" /></div>
+    <p class="note">These two loosen what the badge and the Close button count.
+      Auto-close is deliberately stricter: it only ever closes an exact address match,
+      because nobody is watching when it fires.</p>
+  </section>
+
+  <section>
+    <h2>Memory</h2>
+    <div class="field"><label for="discardOnCollapse">Unload collapsed shelves<span class="hint">a shelf you've folded shut isn't being read — give its memory back</span></label><input type="checkbox" id="discardOnCollapse" /></div>
+    <div class="field"><label for="discardDelayMin">…after this many minutes<span class="hint">the page reloads when you open the shelf again</span></label><input type="number" id="discardDelayMin" min="1" max="120" /></div>
+    <p class="note">Never unloads the tab you're on, a pinned tab, one that's playing
+      audio, or anything on your exceptions list.</p>
+  </section>
+
+  <section>
+    <h2>Backup</h2>
+    <p class="note">Settings live on this machine only — nothing is synced to any
+      account. These buttons are how you carry them to another browser.</p>
+    <div class="row">
+      <button id="export" class="ghost">Export JSON</button>
+      <button id="import" class="ghost">Import JSON</button>
+      <button id="reset" class="ghost">Reset to defaults</button>
+    </div>
+    <input type="file" id="import-file" accept="application/json,.json" hidden />
   </section>
 
   <div><button id="save">Save</button><span id="saved" class="saved"></span></div>

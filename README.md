@@ -38,13 +38,19 @@ rest fold shut behind you (Focus Mode). No cloud, no account, no API key.
 
 ## Features
 
-- **Auto-group by domain** — `github.com → Github`, deterministic colour per site, ccSLD-aware (`example.co.uk`, not `co.uk`).
+- **Auto-group by domain** — `github.com → Github`, deterministic colour per site, ccSLD-aware (`example.co.uk`, not `co.uk`), and hosting-aware (`alice.github.io` and `bob.github.io` are two different people).
 - **Focus Mode** — collapse every group except the one you're working in.
+- **Strays to the end** — whatever stays loose is swept to the back of the strip, so the shelves stand together instead of being broken up by lone tabs.
 - **Custom rules** — send `cnn.com` and `bbc.com` to one **News** shelf; rules override domains.
+- **Find a tab** — type in the popup, jump straight to it. The shelf opens on the way.
 - **Duplicate detection** — badge counts duplicate tabs; close them all in one click, or auto-close on open.
-- **Exceptions** — domains the librarian never touches.
+- **Undo** — one click puts back whatever he last closed or took apart. Five-minute memory.
+- **Give memory back** — optionally unload the tabs in a shelf once you've folded it shut.
+- **Pause** — an hour where he keeps his hands off entirely.
+- **Exceptions** — domains the librarian never touches, subdomains included.
 - **Merge subdomains**, minimum-tabs-to-shelf, collapse-by-size — all optional.
-- **Zero telemetry, zero network.** Everything happens locally in your browser.
+- **Zero telemetry, zero network, no account.** Settings are stored on this machine
+  and nowhere else — not even in browser sync. Export/Import moves them by hand.
 
 ## Install (Load unpacked)
 
@@ -52,7 +58,7 @@ rest fold shut behind you (Focus Mode). No cloud, no account, no API key.
 2. Open `brave://extensions` (or `chrome://extensions`).
 3. Turn on **Developer mode** (top-right).
 4. Click **Load unpacked** and select this folder.
-5. Open a pile of tabs, click the 📚 icon → **Shelve now**.
+5. He opens a page showing what he *would* do, and waits for you to say yes.
 
 No build step. It's vanilla JavaScript — what you see is what runs.
 
@@ -66,11 +72,20 @@ Before shelving a tab, the librarian asks, in order:
 3. Otherwise:                → shelve by domain, coloured by domain
 ```
 
-Lazy, not careless: pinned tabs are never touched, exceptions are honoured, and he
-never sends a single URL anywhere.
+Lazy, not careless: pinned tabs are never touched, exceptions are honoured before any
+rule gets a say, and he never sends a single URL anywhere.
 
 He shelves a tab **when you leave it**, never while you're reading it — so opening a
-link never yanks the current tab out from under you into a faraway group.
+link never yanks the current tab out from under you into a faraway group. A site gets
+a shelf once you have two of its tabs open in that window; a shelf that already exists
+takes new arrivals immediately.
+
+### About closing things
+
+Auto-close only ever closes an **exact** address match — `app/#/inbox` and
+`app/#/billing` are two pages of one app, not two copies of one page. The badge and
+the **Close duplicates** button use your looser settings instead, because there a
+human sees the list first. Either way, **Undo** in the popup puts them back.
 
 ## Shortcuts
 
@@ -95,15 +110,14 @@ may start a fresh group; use a rule if you want them to keep merging.
 
 ## Roadmap
 
+- **Firefox.** `tabGroups` has landed in the WebExtensions API, so the blocker is
+  gone. `lib/` is already browser-agnostic; what differs is the manifest
+  (`background.scripts` instead of a service worker, plus a `gecko` id).
 - **v2 — the librarian learns to read.** Optional semantic grouping by *topic* (not
   just domain) via a **local LLM through Ollama** — fully private, nothing leaves your
-  machine. The grouping engine is already built around a `GroupingStrategy` interface
-  (`lib/grouping.js`), so this drops in as one more strategy. Cloud providers
-  (OpenAI/Claude) as an opt-in fallback.
-- AI rule generation ("group my research tabs") and tab-search.
-- **Firefox** — waiting on a stable `tabGroups` WebExtension API. shelf's grouping is
-  built entirely on `chrome.tabGroups`, which Firefox doesn't expose yet; until it
-  does, shelf is Chromium-only (Chrome · Brave · Edge).
+  machine. A strategy is just `(tabs, settings) => Map<tabId, Shelf>` in
+  `lib/grouping.js`, so this drops into `PIPELINE` as one more entry.
+- A side panel, for people whose shelves outgrow a 320px popup.
 
 ## License
 

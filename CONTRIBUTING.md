@@ -12,16 +12,31 @@ Small, focused project. Contributions welcome — here's the lay of the land.
 
 ## Tests
 
-Pure logic (`lib/domain.js`, `lib/dedupe.js`, `matchRule` in `lib/grouping.js`) is
-covered by unit tests on Node's built-in runner — no dependencies:
+Everything is covered by unit tests on Node's built-in runner — no dependencies:
 
 ```bash
-node --test tests/      # or: npm test
+node --test      # or: npm test
 ```
 
-Add a test in `tests/lib.test.js` for any new pure function. Anything that calls
-`chrome.*` lives in `background.js` and is verified by hand in the browser (see the
-checklist in the PR template / README).
+Add a test in `tests/lib.test.js` for any new pure function.
+
+Code that calls `chrome.*` is covered too: `tests/fake-chrome.js` is a small in-memory
+browser (windows, tabs, groups, storage) with no dependencies. Install it on
+`globalThis.chrome` **before** importing `background.js` — that module registers its
+listeners at import time — then drive it through `world.fire(...)`:
+
+```js
+const world = makeWorld({ tabs: [...] });
+globalThis.chrome = makeChrome(world);
+const bg = await import("../background.js");
+await world.fire("tabs.onActivated", { tabId: 2, windowId: 1 });
+await bg.idle();                     // wait for the per-window queue to drain
+assert.equal(world.groups().length, 1);
+```
+
+`world.calls` counts API calls, which is how the "one pass, not one per tab" promise
+in `shelve()` stays honest. Only the truly untestable bits — how Chrome itself behaves
+on discard, session restore, or a dragged tab — are verified by hand.
 
 ## Icons
 
@@ -35,12 +50,15 @@ Commit the regenerated `icons/icon*.png`. CI checks they're up to date.
 
 ## Architecture (where things go)
 
-- `lib/grouping.js` — the shelving engine. New ways to group tabs are **strategies**:
-  implement `GroupingStrategy.assign(tabs, settings) → Map<tabId, {key,title,color}>`
-  and add it to `PIPELINE` (first strategy to claim a tab wins). This is where the
-  planned local-LLM (Ollama) strategy will live. `computeAssignments` only feeds
-  **loose** tabs to strategies, and `applyAssignments` never renames/recolours an
-  existing group — shelf respects manual organisation.
+- `lib/grouping.js` — the shelving engine. A **strategy** is a plain function
+  `(tabs, settings) → Map<tabId, {key,title,color}>`; add it to `PIPELINE` and the
+  first strategy to claim a tab wins. This is where the planned local-LLM (Ollama)
+  strategy will live. `assignAll` runs the pipeline over every tab (exceptions are
+  filtered out first, before any strategy sees them); `computeAssignments` is the
+  same thing narrowed to **loose** tabs. `applyAssignments` finds a shelf's existing
+  group by *what's in it* — the key most of its tabs share — because `chrome.tabGroups`
+  gives us nowhere to store our own id. It never renames or recolours a group that
+  already exists: shelf respects manual organisation.
 - `lib/domain.js` / `lib/dedupe.js` — pure helpers (keep them browser-free, so they
   stay testable).
 - `background.js` — the service worker: event wiring, the per-window serialization

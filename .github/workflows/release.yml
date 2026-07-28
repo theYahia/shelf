@@ -1,0 +1,43 @@
+name: release
+
+# Tag a version, get a zip you can upload to the Chrome Web Store.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run unit tests
+        run: node --test
+
+      - name: Check the tag matches the manifest
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest=$(node -p "require('./manifest.json').version")
+          package=$(node -p "require('./package.json').version")
+          if [ "$tag" != "$manifest" ] || [ "$tag" != "$package" ]; then
+            echo "::error::tag $tag, manifest $manifest, package $package — these must agree"
+            exit 1
+          fi
+
+      # Everything the browser loads, and nothing else.
+      - name: Pack
+        run: |
+          zip -r "shelf-${GITHUB_REF_NAME}.zip" . \
+            -x '.git/*' '.github/*' 'tests/*' 'scripts/*' 'docs/*' 'assets/*' \
+               '*.md' '.gitignore' '.gitattributes' 'package.json'
+
+      - name: Release
+        run: gh release create "$GITHUB_REF_NAME" "shelf-${GITHUB_REF_NAME}.zip" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}

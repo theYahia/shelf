@@ -12,6 +12,23 @@
       --leather-dark: #5e3717;
       --muted: #8a7a66;
       --line: #d9cbb6;
+      --field: #fffdf8;        /* an unwritten page */
+      --chip: #ece0cd;
+      --on-leather: #fdf7ee;
+    }
+    /* The reading room after hours. */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #1c1815;
+        --ink: #e8ddcc;
+        --leather: #8a5628;
+        --leather-dark: #b07a45;
+        --muted: #948573;
+        --line: #362f28;
+        --field: #14110f;
+        --chip: #2a231d;
+        --on-leather: #fdf7ee;
+      }
     }
     * { box-sizing: border-box; }
     body {
@@ -34,14 +51,32 @@
       border: 1px solid var(--leather-dark);
       border-radius: 6px;
       background: var(--leather);
-      color: #fdf7ee;
+      color: var(--on-leather);
       cursor: pointer;
       transition: background 0.12s ease;
     }
     button:hover { background: var(--leather-dark); }
     button.ghost { background: transparent; color: var(--leather-dark); }
-    button.ghost:hover { background: #ece0cd; }
+    button.ghost:hover { background: var(--chip); }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .search { padding: 10px 16px 0; }
+    .search input {
+      width: 100%; font-family: inherit; font-size: 13px; padding: 7px 10px;
+      border: 1px solid var(--line); border-radius: 6px; background: var(--field); color: var(--ink);
+    }
+    .search input:focus { outline: none; border-color: var(--leather); }
+    #results { max-height: 260px; overflow-y: auto; margin-top: 6px; }
+    .result {
+      display: flex; align-items: center; gap: 6px; font-size: 12px;
+      padding: 5px 6px; border-radius: 4px; cursor: pointer;
+    }
+    .result img { width: 14px; height: 14px; flex: 0 0 auto; }
+    .result span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .result:hover, .result.on { background: var(--chip); }
+    /* While searching, the popup is a finder and nothing else. */
+    body.searching .actions, body.searching .undo-bar, body.searching .dupes { display: none; }
+    .undo-bar { padding: 0 16px 10px; display: none; }
+    .undo-bar button { width: 100%; font-size: 13px; padding: 7px 10px; }
     .dupes { padding: 0 16px 14px; }
     .dupes h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 8px 0; }
     .dupe-empty { font-size: 12px; color: var(--muted); font-style: italic; }
@@ -60,14 +95,24 @@
     <p class="tagline">He says nothing. He shelves them.</p>
   </header>
 
+  <div class="search">
+    <input id="q" type="search" placeholder="Find a tab…" autocomplete="off" spellcheck="false" />
+    <div id="results"></div>
+  </div>
+
   <div class="actions">
     <button id="shelve">Shelve now</button>
     <div class="row">
       <button id="hush" class="ghost">Hush (collapse)</button>
       <button id="expand" class="ghost">Expand all</button>
     </div>
-    <button id="ungroup" class="ghost">Unshelve everything</button>
+    <div class="row">
+      <button id="ungroup" class="ghost">Unshelve everything</button>
+      <button id="pause" class="ghost">Pause 1h</button>
+    </div>
   </div>
+
+  <div class="undo-bar"><button id="undo" class="ghost">Undo</button></div>
 
   <div class="dupes">
     <h2>Duplicates</h2>

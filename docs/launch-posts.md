@@ -44,8 +44,8 @@ Notable bits for this crowd:
 - It groups a tab only when you *leave* it, so opening a link never yanks the tab
   you're reading into a faraway group. It also respects groups you made manually.
 
-Manifest V3, Chromium (Chrome/Brave/Edge); Firefox is waiting on a stable tabGroups
-API. MIT. LINK
+Manifest V3, Chromium (Chrome/Brave/Edge); a Firefox build is next now that
+`tabGroups` has landed there. MIT. LINK
 
 ---
 
