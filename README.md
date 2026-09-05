@@ -122,3 +122,7 @@ may start a fresh group; use a rule if you want them to keep merging.
 ## License
 
 [MIT](LICENSE). The shortest license that holds.
+
+---
+
+Telegram: [@vhodvai](https://t.me/vhodvai)
